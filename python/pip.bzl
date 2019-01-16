@@ -14,25 +14,30 @@
 """Import pip requirements into Bazel."""
 
 def _pip_import_impl(repository_ctx):
-  """Core implementation of pip_import."""
+    """Core implementation of pip_import."""
 
-  # Add an empty top-level BUILD file.
-  # This is because Bazel requires BUILD files along all paths accessed
-  # via //this/sort/of:path and we wouldn't be able to load our generated
-  # requirements.bzl without it.
-  repository_ctx.file("BUILD", "")
+    # Add an empty top-level BUILD file.
+    # This is because Bazel requires BUILD files along all paths accessed
+    # via //this/sort/of:path and we wouldn't be able to load our generated
+    # requirements.bzl without it.
+    repository_ctx.file("BUILD", "")
 
-  # To see the output, pass: quiet=False
-  result = repository_ctx.execute([
-    "python", repository_ctx.path(repository_ctx.attr._script),
-    "--name", repository_ctx.attr.name,
-    "--input", repository_ctx.path(repository_ctx.attr.requirements),
-    "--output", repository_ctx.path("requirements.bzl"),
-    "--directory", repository_ctx.path(""),
-  ])
+    # To see the output, pass: quiet=False
+    result = repository_ctx.execute([
+        "/usr/bin/python3.6",
+        repository_ctx.path(repository_ctx.attr._script),
+        "--name",
+        repository_ctx.attr.name,
+        "--input",
+        repository_ctx.path(repository_ctx.attr.requirements),
+        "--output",
+        repository_ctx.path("requirements.bzl"),
+        "--directory",
+        repository_ctx.path(""),
+    ])
 
-  if result.return_code:
-    fail("pip_import failed: %s (%s)" % (result.stdout, result.stderr))
+    if result.return_code:
+        fail("pip_import failed: %s (%s)" % (result.stdout, result.stderr))
 
 pip_import = repository_rule(
     attrs = {
@@ -42,9 +47,9 @@ pip_import = repository_rule(
             single_file = True,
         ),
         "_script": attr.label(
-            executable = True,
-            default = Label("//tools:piptool.par"),
             cfg = "host",
+            default = Label("//tools:piptool.par"),
+            executable = True,
         ),
     },
     implementation = _pip_import_impl,
@@ -93,9 +98,9 @@ Args:
 """
 
 def pip_repositories():
-  """Pull in dependencies needed for pulling in pip dependencies.
+    """Pull in dependencies needed for pulling in pip dependencies.
 
-  A placeholder method that will eventually pull in any dependencies
-  needed to install pip dependencies.
-  """
-  pass
+    A placeholder method that will eventually pull in any dependencies
+    needed to install pip dependencies.
+    """
+    pass
